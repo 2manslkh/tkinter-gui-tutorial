@@ -2,15 +2,13 @@
 # -*- coding: UTF-8 -*-
 
 from tkinter import Button, Entry, Frame, Label, Menu, StringVar, messagebox
+import tkinter.font as tkFont
 import utils
-# import lib.dbcontent as dbcontent
-# import lib.global_variable as glv
 from pages.ViewerPage import Viewer
-# from lib.functions import set_window_center
+from pages.PlayerPage import Player
 
 
 class MainMenu():
-    """登录"""
 
     def __init__(self, master=None):
 
@@ -24,15 +22,18 @@ class MainMenu():
     def init_page(self):
 
         self.page = Frame(self.root)
-        self.page.pack()
+        self.page.pack(pady=10)
 
-        Label(self.page).grid(row=0, stick="W")
+        fontStyle = tkFont.Font(family="Lucida Grande", size=16)
+        Label(self.page, text="Badminton Ladder Main Menu", font=fontStyle).grid(
+            row=0, column=0)
+
         button_viewer = Button(self.page, text="Viewer", command=self.goViewer)
-        button_viewer.grid(row=1, column=1, stick="W", pady=10)
+        button_viewer.grid(row=1, column=0, stick="NSEW", pady=8)
         button_player = Button(self.page, text="Player", command=self.goPlayer)
-        button_player.grid(row=2, column=1, stick="W", pady=10)
+        button_player.grid(row=2, column=0, stick="NSEW", pady=8)
         button_editor = Button(self.page, text="Editor", command=self.goEditor)
-        button_editor.grid(row=3, column=1, stick="W", pady=10)
+        button_editor.grid(row=3, column=0, stick="NSEW", pady=8)
 
     def goViewer(self):
         self.page.destroy()
@@ -40,7 +41,7 @@ class MainMenu():
 
     def goPlayer(self):
         self.page.destroy()
-        PlayerPage(self.root)
+        Player(self.root)
 
     def goEditor(self):
         self.page.destroy()

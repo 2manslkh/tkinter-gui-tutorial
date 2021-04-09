@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def set_window_center(window, width, height):
 
     w_s = window.winfo_screenwidth()
@@ -30,6 +33,27 @@ def treeview_sort_column(tv, col, reverse):
         tv, col, not reverse))
 
 
+def determine_winner(matches):
+
+    player_1_games = 0
+    player_2_games = 0
+
+    if len(matches) < 2:
+        return "TBA"
+
+    for match in matches:
+        match = match.split("-")
+        if match[0] > match[1]:
+            player_1_games += 1
+        else:
+            player_2_games += 1
+
+    if player_1_games > player_2_games:
+        return 0
+    else:
+        return 1
+
+
 def update_position(ladder: [], player_1: str, player_2: str = "test"):
     # Updates player_1 position with player_2's position
 
@@ -42,6 +66,22 @@ def update_position(ladder: [], player_1: str, player_2: str = "test"):
 
     ladder.insert(ladder.index(player_2), ladder.pop(ladder.index(player_1)))
     return ladder
+
+# Calculates matches played by player
+
+
+def calculate_matches_played(data):
+    output = {}
+    for x in data:
+        if x['name_1'] not in output:
+            output[x['name_1']] = 1
+        else:
+            output[x['name_1']] += 1
+        if x['name_2'] not in output:
+            output[x['name_2']] = 1
+        else:
+            output[x['name_2']] += 1
+    return output
 
 
 class DataFile:
@@ -86,12 +126,12 @@ class DataFile:
                     action = "result"
                     line = line.split("/")
 
-                    name_1 = line[0][1:]
+                    name_1 = line[0]
                     name_split = name_1.split(" ")
                     name_1 = name_split[0] + " " + name_split[1]
                     position_1 = name_split[2]
 
-                    name_2 = line[1][1:]
+                    name_2 = line[1]
                     name_split = name_2.split(" ")
                     name_2 = name_split[0] + " " + name_split[1]
                     position_2 = name_split[2]
@@ -99,6 +139,8 @@ class DataFile:
                     date = datetime.strptime(line[2], '%d-%m-%Y')
 
                     results = line[3].split(" ")
+                    if results[0] == '':
+                        results = []
 
                 data["action"] = action
                 data["name_1"] = name_1
