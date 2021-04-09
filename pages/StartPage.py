@@ -1,40 +1,57 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-import os
-from tkinter import Canvas, Label, Tk
-
+from tkinter import Button, Entry, Frame, Label, Menu, StringVar, messagebox
 import utils
+# import lib.dbcontent as dbcontent
+# import lib.global_variable as glv
+from pages.ViewerPage import Viewer
+# from lib.functions import set_window_center
 
 
-class StartPage(Tk):
+class MainMenu():
+    """登录"""
 
-    def __init__(self):
-        Tk.__init__(self)
-        self.title("Start Page")
-        self.w = 300
-        self.h = 600
-        utils.set_window_center(self, self.w, self.h)
-        self.resizable(False, False)
-        self.create()
+    def __init__(self, master=None):
 
-    def create(self):
+        self.root = master
+        self.root.title("Main Menu")
+        utils.set_window_center(self.root, 300, 180)
+        self.username = StringVar()
+        self.password = StringVar()
+        self.init_page()
 
-        canvas = Canvas(self, width=self.w, height=self.h, bg="white")
+    def init_page(self):
 
-        canvas.create_text(
-            self.w / 2, self.h / 6, text="Badminton Ladder", font="time 20", tags="string"
-        )
+        self.page = Frame(self.root)
+        self.page.pack()
 
-        # Create Viewer Button
+        Label(self.page).grid(row=0, stick="W")
+        button_viewer = Button(self.page, text="Viewer", command=self.goViewer)
+        button_viewer.grid(row=1, column=1, stick="W", pady=10)
+        button_player = Button(self.page, text="Player", command=self.goPlayer)
+        button_player.grid(row=2, column=1, stick="W", pady=10)
+        button_editor = Button(self.page, text="Editor", command=self.goEditor)
+        button_editor.grid(row=3, column=1, stick="W", pady=10)
 
-        # Create Player Button
+    def goViewer(self):
+        self.page.destroy()
+        Viewer(self.root)
 
-        # Create Editor Button
+    def goPlayer(self):
+        self.page.destroy()
+        PlayerPage(self.root)
 
-        Label(self, text="Jefri Tan", bg="green", fg="#fff", height=2).pack(
-            fill="both", side="bottom"
-        )
-        canvas.pack(fill="both")
+    def goEditor(self):
+        self.page.destroy()
+        EditorPage(self.root)
 
-        self.mainloop()
+    def doCancel(self):
+        self.page.quit()
+
+    def returnEnvent(self, event):
+        self.doLogin()
+
+    def isLoggedIn(self):
+        # return True
+        return False

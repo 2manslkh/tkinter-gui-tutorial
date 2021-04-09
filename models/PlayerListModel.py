@@ -26,7 +26,12 @@ class PlayerList():
         self.players.append(player)
         self.num_players += 1
 
-    # Edit a current player's position
+    # updates position based on ladder
+    def recalculate_positions(self, ladder):
+        for index, player in enumerate(ladder):
+            edit_player_position(self, player, index)
+
+            # Edit a current player's position
     def edit_player_position(self, player_name, new_position):
         player_index = self.find_player_index(player_name)
         if player_index != -1:

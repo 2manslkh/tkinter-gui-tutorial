@@ -30,6 +30,20 @@ def treeview_sort_column(tv, col, reverse):
         tv, col, not reverse))
 
 
+def update_position(ladder: [], player_1: str, player_2: str = "test"):
+    # Updates player_1 position with player_2's position
+
+    player_1_position = ladder.index(player_1)  # Winner
+    player_2_position = ladder.index(player_2)  # Loser
+
+    # No update if player 1 (winner) is already in a higher position
+    if player_1_position < player_2_position:
+        return ladder
+
+    ladder.insert(ladder.index(player_2), ladder.pop(ladder.index(player_1)))
+    return ladder
+
+
 class DataFile:
 
     data_list = []
@@ -108,12 +122,19 @@ class DataFile:
             f.write(line + "\n")
 
     @classmethod
+    def add_player(cls, player_name, join_date):
+        with open(file_name, 'a') as f:  # Open file for write
+            f.write(f"+{player_name}/{join_date}")
+
+    @classmethod
+    def remove_player(cls, player_name, position, leave_date):
+        with open(file_name, 'a') as f:  # Open file for write
+            f.write(f"-{player_name} {position}/{leave_date}")
+
+    @classmethod
     def get_data(cls):
         cls.read_data_file()
         return cls.data_list
-
-
-DataFile.get_data()
 
 
 class LadderFile:
@@ -123,7 +144,7 @@ class LadderFile:
 
     @classmethod
     def read_ladder_file(cls):
-        with open(file_name, 'r') as f:  # Open file for read
+        with open(cls.file_name, 'r') as f:  # Open file for read
             for line in f:  # Read line-by-line
                 line = line.strip()
 
@@ -138,5 +159,37 @@ class LadderFile:
         return cls.ladder
 
     @classmethod
-    def write_ladder(cls):
-        return cls.ladder
+    def write_ladder(cls, ladder_list):
+        with open(cls.file_name, 'w') as f:  # Open file for write
+            for x in ladder_list:
+                f.write(x + "\n")
+
+    @classmethod
+    def update_position(cls, player_1: str, player_2: str = "test"):
+        # Updates player_1 position with player_2's position
+
+        player_1_position = cls.ladder.index(player_1)  # Winner
+        player_2_position = cls.ladder.index(player_2)  # Loser
+
+        # No update if player 1 (winner) is already in a higher position
+        if player_1_position < player_2_position:
+            print(cls.ladder)
+            return
+
+        cls.ladder.insert(cls.ladder.index(player_2),
+                          cls.ladder.pop(cls.ladder.index(player_1)))
+        cls.write_ladder(cls.ladder)
+        print(cls.ladder)
+        return
+
+    @classmethod
+    def add_player(cls, player_name):
+        cls.ladder.append(player_name)
+        cls.write_ladder(cls.ladder)
+        print(cls.ladder)
+
+    @classmethod
+    def remove_player(cls, player_name):
+        cls.ladder.pop(cls.ladder.index(player_name))
+        cls.write_ladder(cls.ladder)
+        print(cls.ladder)
