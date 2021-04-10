@@ -1,4 +1,4 @@
-class Player():
+class Player:
 
     name = ""
     wins = 0

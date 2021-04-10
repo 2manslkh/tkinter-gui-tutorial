@@ -8,8 +8,7 @@ from pages.ViewerPage import Viewer
 from pages.PlayerPage import Player
 
 
-class MainMenu():
-
+class MainMenu:
     def __init__(self, master=None):
 
         self.root = master
@@ -26,14 +25,13 @@ class MainMenu():
 
         fontStyle = tkFont.Font(family="Lucida Grande", size=16)
         Label(self.page, text="Badminton Ladder Main Menu", font=fontStyle).grid(
-            row=0, column=0)
+            row=0, column=0
+        )
 
         button_viewer = Button(self.page, text="Viewer", command=self.goViewer)
         button_viewer.grid(row=1, column=0, stick="NSEW", pady=8)
         button_player = Button(self.page, text="Player", command=self.goPlayer)
         button_player.grid(row=2, column=0, stick="NSEW", pady=8)
-        button_editor = Button(self.page, text="Editor", command=self.goEditor)
-        button_editor.grid(row=3, column=0, stick="NSEW", pady=8)
 
     def goViewer(self):
         self.page.destroy()
@@ -43,16 +41,5 @@ class MainMenu():
         self.page.destroy()
         Player(self.root)
 
-    def goEditor(self):
-        self.page.destroy()
-        EditorPage(self.root)
-
     def doCancel(self):
         self.page.quit()
-
-    def returnEnvent(self, event):
-        self.doLogin()
-
-    def isLoggedIn(self):
-        # return True
-        return False

@@ -1,4 +1,4 @@
-class PlayerList():
+class PlayerList:
 
     players = []
     num_players = 0
@@ -32,6 +32,7 @@ class PlayerList():
             edit_player_position(self, player, index)
 
             # Edit a current player's position
+
     def edit_player_position(self, player_name, new_position):
         player_index = self.find_player_index(player_name)
         if player_index != -1:

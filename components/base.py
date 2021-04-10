@@ -1,4 +1,3 @@
-
 # from tkinter import Toplevel, Label, Message, Tk
 # from components import frames
 # from pages.StartPage import Start

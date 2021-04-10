@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-from tkinter import (Button, Label, Frame, Entry, LabelFrame, StringVar, messagebox,
-                     scrolledtext, ttk)
+from tkinter import (
+    Button,
+    Label,
+    Frame,
+    Entry,
+    LabelFrame,
+    StringVar,
+    messagebox,
+    scrolledtext,
+    ttk,
+)
 
 # import lib.dbcontent as dbcontent
 # from lib import global_variable
@@ -22,8 +31,9 @@ class HomeFrame(Frame):  # 继承Frame类
         """加载控件"""
         Label(self, text="用户:").pack()
 
-        Label(self, text="欢迎" +
-              str(global_variable.get_variable("CURRENT_USER_NAME"))).pack()
+        Label(
+            self, text="欢迎" + str(global_variable.get_variable("CURRENT_USER_NAME"))
+        ).pack()
         Button(self, text="查看").pack()
 
 

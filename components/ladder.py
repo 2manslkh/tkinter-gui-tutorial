@@ -1,9 +1,18 @@
-from tkinter import (Button, Label, Frame, Entry, LabelFrame, StringVar, messagebox,
-                     scrolledtext, ttk, Listbox)
+from tkinter import (
+    Button,
+    Label,
+    Frame,
+    Entry,
+    LabelFrame,
+    StringVar,
+    messagebox,
+    scrolledtext,
+    ttk,
+    Listbox,
+)
 
 
 class Ladder(Frame):
-
     def __init__(self, parent=None):
         Frame.__init__(self, parent)
         self.root = parent
@@ -41,18 +50,18 @@ class Ladder(Frame):
         #         ),
         #     )
 
-        vbar = ttk.Scrollbar(self, orient="vertical",
-                             command=self.tree_view.yview)
+        vbar = ttk.Scrollbar(self, orient="vertical", command=self.tree_view.yview)
         self.tree_view.configure(yscrollcommand=vbar.set)
         self.tree_view.grid(row=1, column=0, sticky="nsew")
         vbar.grid(row=1, column=1, sticky="ns")
 
         # Display ladder data into tree view
+
     def loadLadderData(self, ladder_data):
         for pos, name in enumerate(ladder_data):
             self.tree_view.insert(
                 "",
-                'end',
+                "end",
                 text="",
                 values=(pos + 1, name),
             )

@@ -5,16 +5,10 @@ import os
 from tkinter import Tk
 
 # Import pages
-# from pages.EditorPage import EditorPage
-# from pages.PlayerPage import PlayerPage
 from pages import StartPage
-# from pages.ViewerPage import ViewerPage
-# , PlayerPage, StartPage, ViewerPage
-# from components.base import Base
+
 
 # This class will initalize the tkinter App
-
-
 class App(Tk):
     """Application Class"""
 
@@ -24,7 +18,6 @@ class App(Tk):
 
         # Login Window
         StartPage.MainMenu(self)
-        # StartPage.Start(self)
 
         self.mainloop()
 
