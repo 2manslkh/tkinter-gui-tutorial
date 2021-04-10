@@ -21,8 +21,6 @@ from tkcalendar import Calendar, DateEntry
 
 import pages
 
-from components import ladder
-
 from datetime import datetime
 
 from collections import defaultdict
