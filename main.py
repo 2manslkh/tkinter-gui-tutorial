@@ -3,27 +3,27 @@
 
 # Import os
 import os
+import tkinter.font as tkFont
+from collections import defaultdict
+from datetime import datetime
 
 # Import tkinter
 from tkinter import (
     Button,
+    Canvas,
     Entry,
     Frame,
+    Grid,
     Label,
+    LabelFrame,
     Menu,
     StringVar,
-    messagebox,
-    Canvas,
-    LabelFrame,
-    ttk,
-    Grid,
     Tk,
+    messagebox,
+    ttk,
 )
-import tkinter.font as tkFont
-from tkcalendar import Calendar, DateEntry
 
-from datetime import datetime
-from collections import defaultdict
+from tkcalendar import Calendar, DateEntry
 
 # -------------------- Data File Helper --------------------
 
@@ -154,6 +154,7 @@ class DataFile:
         cls.read_data_file()
         return cls.data_list
 
+
 # -------------------- Ladder File Helper --------------------
 
 
@@ -278,6 +279,7 @@ class LadderFile:
         cls.get_ladder()
         return cls.ladder.index(player_name) + 1
 
+
 # -------------------- Helper Functions --------------------
 
 
@@ -363,6 +365,7 @@ def calculate_matches_played(data):
                 output[x["name_2"]] += 1
     return output
 
+
 # -------------------- Main Menu Screen --------------------
 
 
@@ -401,6 +404,7 @@ class MainMenu:
 
     def doCancel(self):
         self.page.quit()
+
 
 # -------------------- Viewer Screen --------------------
 
@@ -812,8 +816,7 @@ class Viewer:
 
     def getHistoricalLeaderboard(self):
         selected_date = self.date_entry.get_date()
-        historical_ladder = LadderFile.get_historical_ladder(
-            selected_date)
+        historical_ladder = LadderFile.get_historical_ladder(selected_date)
         self.loadHistoricalLadderData(historical_ladder)
 
     def displayData(self, event):
@@ -832,7 +835,8 @@ class Viewer:
             if total_matches == max_matches_played
         ]
         self.results_1.set(
-            f"Most Active Players: {str(', '.join(most_active_player))} ({max_matches_played} matche(s))")
+            f"Most Active Players: {str(', '.join(most_active_player))} ({max_matches_played} matche(s))"
+        )
 
     def getLeastActivePlayer(self):
         min_matches_played = min(self.matches_played.values())
@@ -842,7 +846,9 @@ class Viewer:
             if total_matches == min_matches_played
         ]
         self.results_1.set(
-            f"Least Active Players: {str(', '.join(least_active_player))} ({min_matches_played} matche(s))")
+            f"Least Active Players: {str(', '.join(least_active_player))} ({min_matches_played} matche(s))"
+        )
+
 
 # -------------------- Player Screen --------------------
 
@@ -1068,8 +1074,7 @@ class Player:
 
     def updateLadder(self):
         winner = determine_winner(
-            self.match_data[self.selected_item_id]["results"]
-        )
+            self.match_data[self.selected_item_id]["results"])
         if winner == 0:
             winner = self.match_data[self.selected_item_id]["name_1"]
         elif winner == 1:
@@ -1081,8 +1086,7 @@ class Player:
                 f"{self.selection_player_1} won and will swap position with {self.selection_player_2}"
             )
             LadderFile.update_position(
-                self.selection_player_1, self.selection_player_2
-            )
+                self.selection_player_1, self.selection_player_2)
 
     def displayData(self, event):
 
@@ -1257,11 +1261,12 @@ class Player:
 
         self.ladder_data = LadderFile.get_ladder()
 
-# This class will initalize the tkinter App
+
+# --------------- Main App Class ---------------
 
 
 class App(Tk):
-    """Application Class"""
+    """This class will initialize the tkinter App"""
 
     def __init__(self):
 
