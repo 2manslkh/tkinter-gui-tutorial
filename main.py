@@ -1,4 +1,4 @@
-#!C:/Python38/python.exe
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 # Import os
@@ -52,12 +52,14 @@ class DataFile:
                 position_2 = ""
                 date = ""
                 results = []
-                # Check if line represents results (), new player (+) or remove player(-)
 
+                # Check if line represents results (), new player (+) or remove player(-)
                 if line[0] == "+":
                     action = "add"
                     line = line.split("/")
                     name_1 = line[0][1:]
+
+                    # Convert to Datetime object
                     date = datetime.strptime(line[1], "%d-%m-%Y")
                 elif line[0] == "-":
                     action = "remove"
@@ -66,6 +68,8 @@ class DataFile:
                     name_split = name_1.split(" ")
                     name_1 = name_split[0] + " " + name_split[1]
                     position_1 = name_split[2]
+
+                    # Convert to Datetime object
                     date = datetime.strptime(line[1], "%d-%m-%Y")
                 else:
                     action = "result"
@@ -81,6 +85,7 @@ class DataFile:
                     name_2 = name_split[0] + " " + name_split[1]
                     position_2 = name_split[2]
 
+                    # Convert to Datetime object
                     date = datetime.strptime(line[2], "%d-%m-%Y")
 
                     results = line[3].split(" ")
