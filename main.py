@@ -1,13 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
-# Import os
-import os
 import tkinter.font as tkFont
-from collections import defaultdict
+# to compare datetime for editing the results of future matches
 from datetime import datetime
 
-# Import tkinter
+# Import tkinter (the different functions)
 from tkinter import (
     Button,
     Canvas,
@@ -23,9 +18,9 @@ from tkinter import (
     ttk,
 )
 
-from tkcalendar import Calendar, DateEntry
+from tkcalendar import Calendar, DateEntry  # download tkcalendar
 
-# -------------------- Data File Helper --------------------
+# Data File Helper
 
 
 class DataFile:
@@ -33,19 +28,19 @@ class DataFile:
     data_list = []
     file_name = "data.txt"
 
-    @classmethod
+    @classmethod  # class method decorator: https://www.geeksforgeeks.org/classmethod-in-python/
     def read_data_file(cls):
         _data_list = []
         with open(cls.file_name, "r") as f:  # Open file for read
             for line in f.readlines():  # Read line-by-line
-                line = line.strip()
+                line = line.strip()  # Removes any spaces before or after the string
 
                 if line == "":
                     return
 
                 # Keep a single data in a dictionary
                 data = {}
-                action = ""
+                action = ""  # + - empty etc
                 name_1 = ""
                 name_2 = ""
                 position_1 = ""
@@ -57,7 +52,7 @@ class DataFile:
                 if line[0] == "+":
                     action = "add"
                     line = line.split("/")
-                    name_1 = line[0][1:]
+                    name_1 = line[0][1:]  # removing the + in the list
 
                     # Convert to Datetime object
                     date = datetime.strptime(line[1], "%d-%m-%Y")
@@ -215,11 +210,12 @@ class LadderFile:
             elif match_data[n]["action"] == "add":
                 print(f"reverse add player {player_1}")
                 cls.reverse_add_player(player_1)
+
             elif match_data[n]["action"] == "remove":
                 pos_1 = int(match_data[n]["position_1"]) - 1
                 print(f"reverse remove player {player_1}")
                 cls.reverse_remove_player(player_1, pos_1)
-            n -= 1
+            n -= 1  # go up 1 line
 
         return cls.historical_ladder
 
@@ -262,6 +258,7 @@ class LadderFile:
         if player_1_position < player_2_position:
             return
 
+        # remove player 1 name from current position and insert player 1's name into 1 position above player 2
         cls.ladder.insert(
             cls.ladder.index(player_2), cls.ladder.pop(
                 cls.ladder.index(player_1))
@@ -328,11 +325,12 @@ def determine_winner(matches):
         return "TBA"
 
     for match in matches:
-        match = match.split("-")
-        if match[0] > match[1]:
-            player_1_games += 1
-        else:
-            player_2_games += 1
+        if match != '':
+            match = match.split("-")
+            if match[0] > match[1]:
+                player_1_games += 1
+            else:
+                player_2_games += 1
 
     if player_1_games > player_2_games:
         return 0
@@ -371,90 +369,78 @@ def calculate_matches_played(data):
     return output
 
 
-# -------------------- Main Menu Screen --------------------
-
-
+# Main Menu Screen
 class MainMenu:
-    def __init__(self, master=None):
+    def __init__(self, master=None):  # to store the 'master page'
 
-        self.root = master
+        self.root = master  # to store the 'root' window
         self.root.title("Main Menu")
+        # position the window in centre of screen
         set_window_center(self.root, 300, 180)
-        self.username = StringVar()
-        self.password = StringVar()
-        self.init_page()
+        self.init_page()  # to call on the next function
 
     def init_page(self):
 
-        self.page = Frame(self.root)
-        self.page.pack(pady=10)
+        self.page = Frame(self.root)  # create frame for new page
+        self.page.pack(pady=10)  # position 10 units vertical from the frame
 
         fontStyle = tkFont.Font(family="Lucida Grande", size=16)
         Label(self.page, text="Badminton Ladder Main Menu", font=fontStyle).grid(
             row=0, column=0
-        )
+        )  # position the title 'invisible table'
 
+        # button format and position
         button_viewer = Button(self.page, text="Viewer", command=self.goViewer)
         button_viewer.grid(row=1, column=0, stick="NSEW", pady=8)
         button_player = Button(self.page, text="Player", command=self.goPlayer)
         button_player.grid(row=2, column=0, stick="NSEW", pady=8)
 
-    def goViewer(self):
+    def goViewer(self):  # when click the viewer destroy the current page
         self.page.destroy()
-        Viewer(self.root)
+        Viewer(self.root)  # loads the viewer page
 
     def goPlayer(self):
         self.page.destroy()
         Player(self.root)
 
-    def doCancel(self):
-        self.page.quit()
 
+# Viewer Screen
 
-# -------------------- Viewer Screen --------------------
-
-
-class Viewer:
-    def __init__(self, master=None):
+class Viewer:  # making class of functions for viewer
+    def __init__(self, master=None):  # settle the data and build the components
 
         self.root = master
         self.root.title("Badminton Ladder")
-        self.w = 800
+        self.w = 800  # width and height of whole screen, 'golden ratio'
         self.h = 600
         set_window_center(self.root, self.w, self.h)
 
         # Load Data from txt files
+        # getting ladder data from ladder file (another class)
         self.ladder_data = LadderFile.get_ladder()
+        # getting match data from data file (another class)
         self.match_data = DataFile.get_data()
+        # function that finds highest and lowest (dictionary)
         self.matches_played = calculate_matches_played(self.match_data)
 
+        # tkinter class to input variable texts (for the input of position)
         self.var_position = StringVar()
-        self.var_name = StringVar()
-        self.var_win_loss = StringVar()
-        self.var_next_challenger = StringVar()
-        self.results_1 = StringVar()
-        self.results_1.set("Results 1")
-        self.results_2 = StringVar()
-        self.results_2.set("Results 2")
-        self.results_3 = StringVar()
-        self.results_3.set("Results 3")
-        self.results_4 = StringVar()
-        self.results_4.set("Results 4")
+        self.var_name = StringVar()  # for input/output to display name
+        self.results_1 = StringVar()  # display results of most active or least active players
 
         self.name_filter = StringVar()
         self.name_filter.set("Input Name")
 
-        self.hist_leaderboard_date = StringVar()
-        self.hist_leaderboard_date.set("Input Date: DD-MM-YY")
         self.init_ladder()
         self.init_page()
 
     def init_ladder(self):
 
-        self.left_frame = Frame(self.root)
+        self.left_frame = Frame(self.root)  # defining the frame for ladder
+        # left side for both ladder and data
         self.left_frame.pack(side="left", anchor="w")
 
-        # Back Button
+        # back Button
         Button(self.left_frame, text="<<< Back", command=self.goBack, bg="red").pack(
             side="top", fill="both"
         )
@@ -462,9 +448,9 @@ class Viewer:
         # Tree View
         self.ladder = ttk.Treeview(
             self.left_frame, show="headings", height=600)
-        self.ladder.pack(side="left")
+        self.ladder.pack(side="left")  # better way to arrange the components
 
-        # Column Names
+        # Column Names formatting the ladder
         self.ladder["columns"] = ("#", "Name")
 
         self.ladder.column("#", width=25)
@@ -473,38 +459,38 @@ class Viewer:
         self.ladder.heading("#", text="#")
         self.ladder.heading("Name", text="Name")
 
-        self.resetTreeView(self.ladder)
-        # Load Ladder Data
+        self.resetTreeView(self.ladder)  # clear existing data on ladder
+        # Load Ladder Data take already loaded data and insert into tree view
         self.loadLadderData()
 
+        # when clicking on name will update player info
         self.ladder.bind("<<TreeviewSelect>>", self.displayData)
 
-    def goBack(self):
+    def goBack(self):  # called when press back button
 
-        self.footer_frame.destroy()
+        self.footer_frame.destroy()  # destroy current page, frames
         self.body_frame.destroy()
         self.head_frame.destroy()
-        # self.right_frame.destroy()
         self.ladder.destroy()
         self.left_frame.destroy()
-        MainMenu(self.root)
-        # self.root.destroy()
+        MainMenu(self.root)  # go back to main menu after clicking back
 
-    # Load ladder data into tree view
+    # Load ladder data into tree view function used above ^
     def loadLadderData(self):
 
+        # 'enumerate helps get the index and name in the list
         for pos, name in enumerate(self.ladder_data):
             self.ladder.insert(
                 "",
-                "end",
+                "end",  # insert data to the end of the list
                 text="",
-                values=(pos + 1, name),
+                values=(pos + 1, name),  # add 1 for the index
             )
 
     # Load historical ladder data into tree view
     def loadHistoricalLadderData(self, historical_ladder):
-        self.resetTreeView(self.ladder)
-        for pos, name in enumerate(historical_ladder):
+        self.resetTreeView(self.ladder)  # clear current tree first
+        for pos, name in enumerate(historical_ladder):  # same as previous
             self.ladder.insert(
                 "",
                 "end",
@@ -524,13 +510,10 @@ class Viewer:
 
         # Player Data
         # Position
+        # calling on variable 'var_position' to output name and position
         Label(self.head_frame, textvariable=self.var_position).pack(anchor="w")
         # Name
         Label(self.head_frame, textvariable=self.var_name).pack(anchor="w")
-        # Win/Loss
-        Label(self.head_frame, textvariable=self.var_win_loss).pack(anchor="w")
-        # Next Challenge
-        Label(self.head_frame, textvariable=self.var_next_challenger).pack(anchor="w")
 
         # ----- Body Frame -----
         # User options
@@ -541,6 +524,7 @@ class Viewer:
         button_most_active_player = Button(
             self.body_frame, text="Most Active Player", command=self.getMostActivePlayer
         )
+        # 'Ew' expands the button to 'maximise'
         button_most_active_player.grid(row=0, column=0, sticky="EW")
 
         # Least Active Player Button
@@ -564,7 +548,7 @@ class Viewer:
         )
         button_historical_leaderboard.grid(row=2, column=0, sticky="EW")
 
-        # Historical Leaderboard Input
+        # Historical Leaderboard Input (date)
         self.date_entry = DateEntry(
             self.body_frame,
             width=12,
@@ -573,10 +557,11 @@ class Viewer:
             borderwidth=2,
             date_pattern="dd/mm/y",
         )
-        self.date_entry.grid(row=2, column=1, padx=(10, 100))
+        self.date_entry.grid(row=2, column=1, padx=(
+            10, 100))  # spacing the date
 
-        # ----- Footer Frame -----
-        # Upcoming Challenges
+        # Footer Frame (bottom)
+        # All challenges (All button)
         self.footer_frame = Frame(self.right_frame)
         self.footer_frame.pack(fill="both")
 
@@ -584,7 +569,7 @@ class Viewer:
             self.footer_frame, text="All", command=self.getAllMatches
         )
         button_all_matches.grid(row=0, column=0, sticky="W")
-
+        # Upcoming Challenges
         button_upcoming_matches = Button(
             self.footer_frame, text="Upcoming", command=self.getUpcomingMatches
         )
@@ -624,12 +609,12 @@ class Viewer:
         )
         self.date_entry_end.grid(row=0, column=6, sticky="W")
 
-        # Tree View
+        # Tree View (bottom right)
         self.upcoming_challenges = ttk.Treeview(
             self.footer_frame, show="headings")
         self.upcoming_challenges.grid(column=0, row=1, columnspan=7)
 
-        # Column Names
+        # Column Names for tree view
         self.upcoming_challenges["columns"] = (
             "Match Date",
             "Player 1",
@@ -640,7 +625,8 @@ class Viewer:
             "Winner",
         )
 
-        self.upcoming_challenges.column("Match Date", width=100)
+        self.upcoming_challenges.column(
+            "Match Date", width=100)  # defines the width
         self.upcoming_challenges.column("Player 1", width=90)
         self.upcoming_challenges.column("Player 2", width=90)
         self.upcoming_challenges.column("Match 1", width=70)
@@ -648,7 +634,8 @@ class Viewer:
         self.upcoming_challenges.column("Match 3", width=70)
         self.upcoming_challenges.column("Winner", width=98)
 
-        self.upcoming_challenges.heading("Match Date", text="Match Date")
+        self.upcoming_challenges.heading(
+            "Match Date", text="Match Date")  # defines the text
         self.upcoming_challenges.heading("Player 1", text="Player 1")
         self.upcoming_challenges.heading("Player 2", text="Player 2")
         self.upcoming_challenges.heading("Match 1", text="Match 1")
@@ -656,12 +643,12 @@ class Viewer:
         self.upcoming_challenges.heading("Match 3", text="Match 3")
         self.upcoming_challenges.heading("Winner", text="Winner")
 
-    def getAllMatches(self):
+    def getAllMatches(self):  # when you press All button it calls this function
         self.resetTreeView(self.upcoming_challenges)
         for data in self.match_data:
             if data["action"] == "result":
-                # Default Dictionary that returns '-' if key error
-                results = defaultdict(lambda: "-")
+
+                results = {}
                 results[0] = "-"
                 results[1] = "-"
                 results[2] = "-"
@@ -701,8 +688,8 @@ class Viewer:
         for data in self.match_data:
             if data["date"] >= datetime.now():
                 if data["action"] == "result":
-                    # Default Dictionary that returns '-' if key error
-                    results = defaultdict(lambda: "-")
+
+                    results = {}
                     results[0] = "-"
                     results[1] = "-"
                     results[2] = "-"
@@ -733,7 +720,7 @@ class Viewer:
                         ),
                     )
 
-    def resetTreeView(self, tree):
+    def resetTreeView(self, tree):  # empty current tree to display new match results
         tree.delete(*tree.get_children())
 
     def getMatchesByDate(self):
@@ -745,8 +732,8 @@ class Viewer:
                 and data["date"].date() <= self.date_entry_end.get_date()
             ):
                 if data["action"] == "result":
-                    # Default Dictionary that returns '-' if key error
-                    results = defaultdict(lambda: "-")
+
+                    results = {}
                     results[0] = "-"
                     results[1] = "-"
                     results[2] = "-"
@@ -787,7 +774,7 @@ class Viewer:
             ):
                 if data["action"] == "result":
                     # Default Dictionary that returns '-' if key error
-                    results = defaultdict(lambda: "-")
+                    results = {}
                     results[0] = "-"
                     results[1] = "-"
                     results[2] = "-"
@@ -1063,19 +1050,37 @@ class Player:
         if (
             self.checkIfCorrectScoreFormat(game_1_score)
             and self.checkIfCorrectScoreFormat(game_2_score)
-            and self.checkIfCorrectScoreFormat(game_3_score)
         ):
+            if self.match_already_won_at_game_2(game_1_score, game_2_score, game_3_score):
 
-            results = [game_1_score, game_2_score, game_3_score]
-            self.match_data[idx]["results"] = results
-            DataFile.write_data_file_from_data_list(self.match_data)
-            self.getUpcomingMatches()
-            self.alert_msg_3.set("Score Updated!")
+                results = [game_1_score, game_2_score, game_3_score]
+                self.match_data[idx]["results"] = results
+                DataFile.write_data_file_from_data_list(self.match_data)
+                self.updateLadder()
+                self.getUpcomingMatches()
+                self.alert_msg_3.set("Score Updated!")
 
         else:
-            self.alert_msg_3.set("Invalid Format, use <int>-<int>")
+            # self.alert_msg_3.set("Invalid Format, use <int>-<int>")
+            pass
 
-        self.updateLadder()
+    def match_already_won_at_game_2(self, game_1_score, game_2_score, game_3_score):
+
+        g1_p1 = game_1_score.split("-")[0]
+        g1_p2 = game_1_score.split("-")[1]
+        g2_p1 = game_2_score.split("-")[0]
+        g2_p2 = game_2_score.split("-")[1]
+
+        if (g1_p1 > g1_p2 and g2_p2 > g2_p1) or (g1_p2 > g1_p1 and g2_p1 > g2_p2):
+            if game_3_score == "":
+                self.alert_msg_3.set("Game 3 score missing")
+                return False
+            return self.checkIfCorrectScoreFormat(game_3_score)
+        else:
+            if game_3_score != "":
+                self.alert_msg_3.set("Game 3 should be empty")
+                return False
+            return True
 
     def updateLadder(self):
         winner = determine_winner(
@@ -1115,7 +1120,7 @@ class Player:
             if data["date"] >= datetime.now() or data["results"] == []:
                 if data["action"] == "result":
                     # Default Dictionary that returns '-' if key error
-                    results = defaultdict(lambda: "-")
+                    results = {}
                     results[0] = "-"
                     results[1] = "-"
                     results[2] = "-"
@@ -1222,10 +1227,21 @@ class Player:
                 return False
             else:
                 try:
-                    int(x[0])
-                    int(x[1])
+                    s1 = int(x[0])
+                    s2 = int(x[1])
+
+                    if (s1 >= 20 and s2 >= 20) and abs(s1-s2) != 2:
+                        self.alert_msg_3.set(
+                            "Tie Score Margin != 2")
+                        return False
+
+                    if (s1 < 20 and s2 < 20):
+                        self.alert_msg_3.set("score_1 < 20 and score_2 < 20")
+                        return False
+
                     return True
-                except TypeError:
+                except:
+                    self.alert_msg_3.set("Invalid Format, use <int>-<int>")
                     return False
         else:
             return False
@@ -1235,14 +1251,17 @@ class Player:
 
         player_name = self.player_name.get()
 
+        # player should not be added if already
         if self.checkIfPlayerExists(player_name):
             self.alert_msg_1.set("Player already exists!")
+        # to prevent the programme from crashing when there is new players
         elif not self.checkIfCorrectNameFormat(player_name):
             self.alert_msg_1.set(
                 "Player Name should be <First Name> <Last Name>")
+
         else:
             DataFile.add_player(
-                player_name, datetime.now().strftime("%d-%m-%Y"))
+                player_name, datetime.now().strftime("%d-%m-%Y"))  # Format as dd-mm-yy https://www.programiz.com/python-programming/datetime/strftime
             LadderFile.add_player(player_name)
             self.alert_msg_1.set(f"Player {player_name} added!")
 
@@ -1267,21 +1286,17 @@ class Player:
         self.ladder_data = LadderFile.get_ladder()
 
 
-# --------------- Main App Class ---------------
-
-
-class App(Tk):
-    """This class will initialize the tkinter App"""
+# Main App Class
+class App(Tk):  # start tkinter, use class to hold the functions together
 
     def __init__(self):
 
         Tk.__init__(self)
 
-        # Login Window
+        # main menu
         MainMenu(self)
 
-        self.mainloop()
+        self.mainloop()  # loop to keep the app online
 
 
-if __name__ == "__main__":
-    App()
+App()  # calling the class to run
